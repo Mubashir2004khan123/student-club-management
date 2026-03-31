@@ -57,8 +57,9 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-      // Emergency override for master admin account
-      if (user.email.toLowerCase().trim() === "admin@admin.com") {
+      // Emergency override for master admin accounts
+      const adminEmails = ["admin@admin.com", "saifhussain@gmail.com"];
+      if (adminEmails.includes(user.email.toLowerCase().trim())) {
         user.role = "admin";
         user.isApproved = true;
       }

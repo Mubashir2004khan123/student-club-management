@@ -1,0 +1,44 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/backend-express/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/backend-express/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/backend-express
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: src/backend-express/package-lock.json
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Build
+      run: npm run build
+
+    - name: Run Tests
+      run: npm test
+
+    # Automatic redeploy is handled by Render/Railway via GitHub integration.
+    # Optionally, you can trigger a deployment via a Deploy Hook:
+    # - name: Deploy to Render
+    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
